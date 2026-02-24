@@ -1,0 +1,11 @@
+[project]
+name = "skills-getting-started-with-github-copilot"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "email-validator>=2.3.0",
+    "fastapi>=0.121.2",
+    "uvicorn>=0.38.0",
+]
