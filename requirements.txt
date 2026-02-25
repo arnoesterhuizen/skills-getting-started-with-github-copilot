@@ -1,3 +1,5 @@
 fastapi
 uvicorn
 email-validator
+pytest
+httpx
