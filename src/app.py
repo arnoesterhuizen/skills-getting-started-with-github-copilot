@@ -11,6 +11,7 @@ from fastapi.responses import RedirectResponse
 from pydantic import EmailStr
 import os
 from pathlib import Path
+from typing import TypedDict
 
 app = FastAPI(title="Mergington High School API",
               description="API for viewing and signing up for extracurricular activities")
@@ -20,8 +21,15 @@ current_dir = Path(__file__).parent
 app.mount("/static", StaticFiles(directory=os.path.join(Path(__file__).parent,
           "static")), name="static")
 
+class Activity(TypedDict):
+    description: str
+    schedule: str
+    max_participants: int
+    participants: list[str]
+
+
 # In-memory activity database
-activities = {
+activities: dict[str, Activity] = {
     "Chess Club": {
         "description": "Learn strategies and compete in chess tournaments",
         "schedule": "Fridays, 3:30 PM - 5:00 PM",

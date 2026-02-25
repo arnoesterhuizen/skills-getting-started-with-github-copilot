@@ -4,6 +4,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
 
+  function maskEmail(email) {
+    const [localPart, domain] = email.split("@");
+
+    if (!localPart || !domain) {
+      return email;
+    }
+
+    if (localPart.length <= 2) {
+      return `${localPart[0] || ""}*@${domain}`;
+    }
+
+    return `${localPart[0]}${"*".repeat(localPart.length - 2)}${localPart[localPart.length - 1]}@${domain}`;
+  }
+
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
@@ -15,16 +29,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
-        const activityCard = document.createElement("div");
-        activityCard.className = "activity-card";
+        const activityCard = document.createElement("article");
+        activityCard.className = "activity-card h-event";
 
         const spotsLeft = details.max_participants - details.participants.length;
+        const participantsMarkup = details.participants.length
+          ? details.participants
+              .map(
+                (participantEmail) =>
+                  `<li class="h-card"><a class="u-email" href="mailto:${participantEmail}" aria-label="Email ${participantEmail}">${maskEmail(participantEmail)}</a></li>`
+              )
+              .join("")
+          : '<li class="participant-empty">No participants yet</li>';
 
         activityCard.innerHTML = `
-          <h4>${name}</h4>
-          <p>${details.description}</p>
+          <h4 class="p-name">${name}</h4>
+          <p class="p-summary">${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+          <section class="participants" aria-label="Participants for ${name}">
+            <h5>Participants (${details.participants.length})</h5>
+            <ul class="participant-list">
+              ${participantsMarkup}
+            </ul>
+          </section>
         `;
 
         activitiesList.appendChild(activityCard);
